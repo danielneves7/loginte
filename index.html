@@ -10,7 +10,12 @@
 <style>
 :root { --roxo:#7c3aed; }
 
-*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Inter,sans-serif;
+}
 
 body{
     width:100vw;
@@ -18,7 +23,7 @@ body{
     background:url("assets/background.png") center/cover no-repeat;
     overflow:hidden;
     color:#fff;
-    position:relative; /* IMPORTANTE */
+    position:relative;
 }
 
 body::before{
@@ -53,9 +58,16 @@ body::before{
 }
 
 .login h2{font-size:18px}
-.login p{font-size:11px;opacity:.7;margin:6px 0 16px}
+.login p{
+    font-size:11px;
+    opacity:.7;
+    margin:6px 0 16px;
+}
 
-.field{position:relative;margin-bottom:10px}
+.field{
+    position:relative;
+    margin-bottom:10px;
+}
 
 .field input{
     width:100%;
@@ -68,7 +80,9 @@ body::before{
     font-size:11px;
 }
 
-.field input[disabled]{opacity:.9}
+.field input[disabled]{
+    opacity:.9;
+}
 
 .field img.icon{
     position:absolute;
@@ -98,7 +112,7 @@ button{
     font-size:12px;
 }
 
-/* ================= LOADING (MOBILE SAFE) ================= */
+/* ================= LOADING ================= */
 #loading{
     position:absolute;
     bottom:12px;
@@ -128,9 +142,11 @@ button{
     animation:spin 1s linear infinite;
 }
 
-@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spin{
+    to{transform:rotate(360deg)}
+}
 
-/* ================= ERRO (CENTRAL MOBILE) ================= */
+/* ================= ERRO (TEXTO) ================= */
 #errorBox{
     position:absolute;
     left:50%;
@@ -143,8 +159,9 @@ button{
     padding:6px 12px;
     border-radius:6px;
     opacity:0;
-    transition:.25s;
+    transition:.25s ease;
     z-index:11;
+    pointer-events:none;
 }
 
 #errorBox.show{
@@ -198,77 +215,105 @@ button{
 </div>
 
 <script>
-let modo="login", bloqueado=false;
+/* ================= VARIÁVEIS ================= */
+let modo = "login";
+let bloqueado = false;
 
-const usuario=document.getElementById("usuario");
-const email=document.getElementById("email");
-const senha=document.getElementById("senha");
-const loading=document.getElementById("loading");
+const usuario = document.getElementById("usuario");
+const email   = document.getElementById("email");
+const senha   = document.getElementById("senha");
+const loading = document.getElementById("loading");
 
-const errorBox=document.getElementById("errorBox");
-const errorText=document.getElementById("errorText");
+const errorBox  = document.getElementById("errorBox");
+const errorText = document.getElementById("errorText");
 
-const btnPrincipal=document.getElementById("btnPrincipal");
-const btnAlternar=document.getElementById("btnAlternar");
+const btnPrincipal = document.getElementById("btnPrincipal");
+const btnAlternar  = document.getElementById("btnAlternar");
 
-const emailField=document.getElementById("emailField");
-const titulo=document.getElementById("titulo");
-const tituloTopo=document.getElementById("tituloTopo");
-const toggleSenha=document.getElementById("toggleSenha");
+const emailField = document.getElementById("emailField");
+const titulo     = document.getElementById("titulo");
+const tituloTopo = document.getElementById("tituloTopo");
+const toggleSenha= document.getElementById("toggleSenha");
 
-/* FORCE REPAINT (CRÍTICO NO MOBILE) */
-function forceRepaint(el){
-    el.style.display="none";
-    el.offsetHeight;
-    el.style.display="flex";
-}
-
-/* ERRO VISUAL */
+/* ================= FUNÇÃO DE ERRO (SEM ALERT) ================= */
 function showError(msg){
-    errorText.innerText="* "+msg;
+    errorText.innerText = "* " + msg;
+
     loading.classList.remove("show");
-    bloqueado=false;
+    bloqueado = false;
 
     errorBox.classList.add("show");
-    forceRepaint(errorBox);
+    errorBox.offsetHeight; // força repaint no mobile
 
-    setTimeout(()=>errorBox.classList.remove("show"),3000);
+    setTimeout(()=>{
+        errorBox.classList.remove("show");
+    },3000);
 }
 
-/* TOGGLE SENHA */
-toggleSenha.onclick=()=>{
-    senha.type=senha.type==="password"?"text":"password";
+/* ================= TOGGLE SENHA ================= */
+toggleSenha.onclick = ()=>{
+    senha.type = senha.type === "password" ? "text" : "password";
 };
 
-/* CEF */
-Cef.registerEventCallback("setNick",nick=>{
-    usuario.value=nick;
+/* ================= CEF CALLBACKS ================= */
+Cef.registerEventCallback("setNick", nick=>{
+    if(nick) usuario.value = nick;
 });
 
-Cef.registerEventCallback("loginError",msg=>showError(msg));
-Cef.registerEventCallback("registerError",msg=>showError(msg));
+Cef.registerEventCallback("loginError", msg=>{
+    showError(msg);
+});
 
-btnPrincipal.onclick=()=>{
-    if(bloqueado)return;
-    if(!senha.value)return showError("Preencha sua senha.");
+Cef.registerEventCallback("registerError", msg=>{
+    showError(msg);
+});
 
-    bloqueado=true;
+Cef.registerEventCallback("loginSuccess", ()=>{
+    loading.classList.remove("show");
+});
+
+Cef.registerEventCallback("registerSuccess", ()=>{
+    loading.classList.remove("show");
+});
+
+/* ================= BOTÃO PRINCIPAL ================= */
+btnPrincipal.onclick = ()=>{
+    if(bloqueado) return;
+
+    if(!senha.value)
+        return showError("Preencha sua senha.");
+
+    if(modo==="register" && !email.value)
+        return showError("Preencha seu e-mail.");
+
+    bloqueado = true;
     loading.classList.add("show");
-    forceRepaint(loading);
 
     setTimeout(()=>{
         if(modo==="register")
-            Cef.sendEvent("register",senha.value+"|"+email.value);
+            Cef.sendEvent("register", senha.value + "|" + email.value);
         else
-            Cef.sendEvent("login",senha.value);
+            Cef.sendEvent("login", senha.value);
     },4000);
 };
 
-btnAlternar.onclick=()=>{
-    modo = modo==="login" ? "register" : "login";
-    emailField.style.display = modo==="register" ? "block" : "none";
-    btnPrincipal.innerText = modo==="register" ? "Criar Conta" : "Conectar-se";
-    btnAlternar.innerText = modo==="register" ? "Conectar-se" : "Criar Conta";
+/* ================= TROCAR LOGIN / REGISTRO ================= */
+btnAlternar.onclick = ()=>{
+    if(modo==="login"){
+        modo="register";
+        emailField.style.display="block";
+        btnPrincipal.innerText="Criar Conta";
+        btnAlternar.innerText="Conectar-se";
+        titulo.innerText="Crie sua conta";
+        tituloTopo.innerText="Criar Conta";
+    }else{
+        modo="login";
+        emailField.style.display="none";
+        btnPrincipal.innerText="Conectar-se";
+        btnAlternar.innerText="Criar Conta";
+        titulo.innerText="Insira suas credenciais";
+        tituloTopo.innerText="Realizar Login";
+    }
 };
 </script>
 
