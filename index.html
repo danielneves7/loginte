@@ -13,24 +13,33 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}
 
 body{
-    width:100vw;height:100vh;
+    width:100vw;
+    height:100vh;
     background:url("assets/background.png") center/cover no-repeat;
-    overflow:hidden;color:#fff;
+    overflow:hidden;
+    color:#fff;
+    position:relative; /* IMPORTANTE */
 }
 
 body::before{
-    content:"";position:absolute;inset:0;
-    background:rgba(0,0,0,.25);z-index:0;
+    content:"";
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.25);
+    z-index:0;
 }
 
 /* ================= LAYOUT ================= */
 .container{
-    position:relative;z-index:1;
+    position:relative;
+    z-index:1;
     padding:24px 40px;
 }
 
 .header{
-    display:flex;align-items:center;gap:10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
 }
 
 .header img{height:36px}
@@ -39,7 +48,8 @@ body::before{
 
 /* ================= LOGIN ================= */
 .login{
-    margin-top:40px;max-width:260px;
+    margin-top:40px;
+    max-width:260px;
 }
 
 .login h2{font-size:18px}
@@ -48,37 +58,49 @@ body::before{
 .field{position:relative;margin-bottom:10px}
 
 .field input{
-    width:100%;height:32px;
+    width:100%;
+    height:32px;
     background:rgba(255,255,255,.1);
     border:1px solid rgba(255,255,255,.2);
     border-radius:6px;
     padding:0 34px;
-    color:#fff;font-size:11px;
+    color:#fff;
+    font-size:11px;
 }
 
-.field input[disabled]{opacity:.85}
+.field input[disabled]{opacity:.9}
 
 .field img.icon{
-    position:absolute;left:10px;top:50%;
-    transform:translateY(-50%);width:14px;
+    position:absolute;
+    left:10px;
+    top:50%;
+    transform:translateY(-50%);
+    width:14px;
 }
 
 .field img.toggle{
-    position:absolute;right:10px;top:50%;
-    transform:translateY(-50%);width:16px;
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%);
+    width:16px;
     cursor:pointer;
 }
 
 button{
-    width:100%;height:32px;margin-top:8px;
+    width:100%;
+    height:32px;
+    margin-top:8px;
     background:var(--roxo);
-    border:none;border-radius:6px;
-    color:#fff;font-size:12px;cursor:pointer;
+    border:none;
+    border-radius:6px;
+    color:#fff;
+    font-size:12px;
 }
 
-/* ================= LOADING (DIREITA EM BAIXO) ================= */
+/* ================= LOADING (MOBILE SAFE) ================= */
 #loading{
-    position:fixed;
+    position:absolute;
     bottom:12px;
     right:16px;
     background:rgba(0,0,0,.55);
@@ -89,14 +111,17 @@ button{
     font-size:10px;
     opacity:0;
     pointer-events:none;
-    transition:.3s;
-    z-index:9999;
+    transition:.25s;
+    z-index:10;
 }
 
-#loading.show{opacity:1}
+#loading.show{
+    opacity:1;
+}
 
 .spinner{
-    width:14px;height:14px;
+    width:14px;
+    height:14px;
     border:2px solid rgba(255,255,255,.3);
     border-top:2px solid #fff;
     border-radius:50%;
@@ -105,22 +130,21 @@ button{
 
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ================= ERRO (CENTRO) ================= */
+/* ================= ERRO (CENTRAL MOBILE) ================= */
 #errorBox{
-    position:fixed;
-    bottom:46px; /* acima do loading */
+    position:absolute;
     left:50%;
-    transform:translateX(-50%) translateY(20px);
-    background:rgba(255,0,0,.15);
+    bottom:52px;
+    transform:translateX(-50%) translateY(10px);
+    background:rgba(255,0,0,.18);
     border:1px solid rgba(255,0,0,.6);
     color:#ff6b6b;
     font-size:11px;
     padding:6px 12px;
     border-radius:6px;
     opacity:0;
-    pointer-events:none;
-    transition:.3s ease;
-    z-index:10000;
+    transition:.25s;
+    z-index:11;
 }
 
 #errorBox.show{
@@ -141,10 +165,7 @@ button{
 
     <div class="login">
         <h2 id="titulo">Insira suas credenciais</h2>
-        <p id="descricao">
-            Insira seu nome de usuário e senha<br>
-            Sintonia Roleplay.
-        </p>
+        <p id="descricao">Insira seu nome de usuário e senha</p>
 
         <div class="field">
             <img class="icon" src="assets/usuario.png">
@@ -167,126 +188,87 @@ button{
     </div>
 </div>
 
-<!-- LOADING -->
 <div id="loading">
     <div class="spinner"></div>
-    <span>Carregando os dados</span>
+    <span>Carregando dados</span>
 </div>
 
-<!-- ERRO -->
 <div id="errorBox">
     <span id="errorText"></span>
 </div>
 
 <script>
-/* =====================================================
-   FALLBACK PARA NAVEGADOR
-===================================================== */
-if(typeof Cef==="undefined"){
-    window.Cef={
-        sendEvent:(n,d)=>console.log("[CEF SEND]",n,d),
-        registerEventCallback:(n,cb)=>{
-            if(n==="setNick"){
-                setTimeout(()=>cb("Teste_Nick"),500);
-            }
-        }
-    };
-}
-
-/* ================= VARIÁVEIS ================= */
 let modo="login", bloqueado=false;
 
-const usuario = document.getElementById("usuario");
-const email   = document.getElementById("email");
-const senha   = document.getElementById("senha");
-const loading = document.getElementById("loading");
+const usuario=document.getElementById("usuario");
+const email=document.getElementById("email");
+const senha=document.getElementById("senha");
+const loading=document.getElementById("loading");
 
-const btnPrincipal = document.getElementById("btnPrincipal");
-const btnAlternar  = document.getElementById("btnAlternar");
+const errorBox=document.getElementById("errorBox");
+const errorText=document.getElementById("errorText");
 
-const emailField = document.getElementById("emailField");
-const titulo     = document.getElementById("titulo");
-const descricao  = document.getElementById("descricao");
-const tituloTopo = document.getElementById("tituloTopo");
+const btnPrincipal=document.getElementById("btnPrincipal");
+const btnAlternar=document.getElementById("btnAlternar");
 
-const toggleSenha = document.getElementById("toggleSenha");
-const errorBox  = document.getElementById("errorBox");
-const errorText = document.getElementById("errorText");
+const emailField=document.getElementById("emailField");
+const titulo=document.getElementById("titulo");
+const tituloTopo=document.getElementById("tituloTopo");
+const toggleSenha=document.getElementById("toggleSenha");
 
-/* ================= TOGGLE SENHA ================= */
-toggleSenha.onclick=()=>{
-    senha.type = senha.type==="password"?"text":"password";
-    toggleSenha.src = senha.type==="password"
-        ?"assets/ocultar.png":"assets/mostrar.png";
-};
+/* FORCE REPAINT (CRÍTICO NO MOBILE) */
+function forceRepaint(el){
+    el.style.display="none";
+    el.offsetHeight;
+    el.style.display="flex";
+}
 
-/* ================= ERRO VISUAL ================= */
+/* ERRO VISUAL */
 function showError(msg){
     errorText.innerText="* "+msg;
-
     loading.classList.remove("show");
     bloqueado=false;
 
     errorBox.classList.add("show");
-    setTimeout(()=>{
-        errorBox.classList.remove("show");
-    },3000);
+    forceRepaint(errorBox);
+
+    setTimeout(()=>errorBox.classList.remove("show"),3000);
 }
 
-/* ================= RECEBE NICK ================= */
-Cef.registerEventCallback("setNick", nick=>{
-    if(nick) usuario.value=nick;
+/* TOGGLE SENHA */
+toggleSenha.onclick=()=>{
+    senha.type=senha.type==="password"?"text":"password";
+};
+
+/* CEF */
+Cef.registerEventCallback("setNick",nick=>{
+    usuario.value=nick;
 });
 
-/* ================= CALLBACKS ================= */
-Cef.registerEventCallback("loginError", msg=>showError(msg));
-Cef.registerEventCallback("registerError", msg=>showError(msg));
+Cef.registerEventCallback("loginError",msg=>showError(msg));
+Cef.registerEventCallback("registerError",msg=>showError(msg));
 
-Cef.registerEventCallback("loginSuccess", ()=>{
-    loading.classList.remove("show");
-});
-Cef.registerEventCallback("registerSuccess", ()=>{
-    loading.classList.remove("show");
-});
-
-/* ================= BOTÃO PRINCIPAL ================= */
 btnPrincipal.onclick=()=>{
-    if(bloqueado) return;
-
-    if(!senha.value) return showError("Preencha sua senha.");
-    if(modo==="register" && !email.value)
-        return showError("Preencha seu e-mail.");
+    if(bloqueado)return;
+    if(!senha.value)return showError("Preencha sua senha.");
 
     bloqueado=true;
     loading.classList.add("show");
+    forceRepaint(loading);
 
     setTimeout(()=>{
         if(modo==="register")
-            Cef.sendEvent("register", senha.value+"|"+email.value);
+            Cef.sendEvent("register",senha.value+"|"+email.value);
         else
-            Cef.sendEvent("login", senha.value);
+            Cef.sendEvent("login",senha.value);
     },4000);
 };
 
-/* ================= TROCA LOGIN / REGISTRO ================= */
 btnAlternar.onclick=()=>{
-    if(modo==="login"){
-        modo="register";
-        emailField.style.display="block";
-        btnPrincipal.innerText="Criar Conta";
-        btnAlternar.innerText="Conectar-se";
-        titulo.innerText="Crie sua conta";
-        tituloTopo.innerText="Criar Conta";
-        descricao.innerHTML="Preencha os dados abaixo<br>Sintonia Roleplay.";
-    }else{
-        modo="login";
-        emailField.style.display="none";
-        btnPrincipal.innerText="Conectar-se";
-        btnAlternar.innerText="Criar Conta";
-        titulo.innerText="Insira suas credenciais";
-        tituloTopo.innerText="Realizar Login";
-        descricao.innerHTML="Insira seu nome de usuário e senha<br>Sintonia Roleplay.";
-    }
+    modo = modo==="login" ? "register" : "login";
+    emailField.style.display = modo==="register" ? "block" : "none";
+    btnPrincipal.innerText = modo==="register" ? "Criar Conta" : "Conectar-se";
+    btnAlternar.innerText = modo==="register" ? "Conectar-se" : "Criar Conta";
 };
 </script>
 
