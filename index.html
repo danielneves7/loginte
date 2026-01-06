@@ -10,156 +10,84 @@
 <style>
 :root { --roxo:#7c3aed; }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Inter,sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}
 
 body{
-    width:100vw;
-    height:100vh;
+    width:100vw;height:100vh;
     background:url("assets/background.png") center/cover no-repeat;
-    overflow:hidden;
-    color:#fff;
-    position:relative;
+    overflow:hidden;color:#fff;position:relative;
 }
 
 body::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    background:rgba(0,0,0,.25);
-    z-index:0;
+    content:"";position:absolute;inset:0;
+    background:rgba(0,0,0,.25);z-index:0;
 }
 
-/* ================= LAYOUT ================= */
-.container{
-    position:relative;
-    z-index:1;
-    padding:24px 40px;
-}
+.container{position:relative;z-index:1;padding:24px 40px}
 
-.header{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
+.header{display:flex;align-items:center;gap:10px}
 .header img{height:36px}
 .header span{font-size:15px;opacity:.5}
 .header h1{font-size:15px}
 
-/* ================= LOGIN ================= */
-.login{
-    margin-top:40px;
-    max-width:260px;
-}
-
+.login{margin-top:40px;max-width:260px}
 .login h2{font-size:18px}
-.login p{
-    font-size:11px;
-    opacity:.7;
-    margin:6px 0 16px;
-}
+.login p{font-size:11px;opacity:.7;margin:6px 0 16px}
 
-.field{
-    position:relative;
-    margin-bottom:10px;
-}
-
+.field{position:relative;margin-bottom:10px}
 .field input{
-    width:100%;
-    height:32px;
+    width:100%;height:32px;
     background:rgba(255,255,255,.1);
     border:1px solid rgba(255,255,255,.2);
     border-radius:6px;
     padding:0 34px;
-    color:#fff;
-    font-size:11px;
+    color:#fff;font-size:11px;
 }
-
 .field input[disabled]{opacity:.9}
-
 .field img.icon{
-    position:absolute;
-    left:10px;
-    top:50%;
-    transform:translateY(-50%);
-    width:14px;
+    position:absolute;left:10px;top:50%;
+    transform:translateY(-50%);width:14px;
 }
-
 .field img.toggle{
-    position:absolute;
-    right:10px;
-    top:50%;
-    transform:translateY(-50%);
-    width:16px;
-    cursor:pointer;
+    position:absolute;right:10px;top:50%;
+    transform:translateY(-50%);width:16px;
 }
 
 button{
-    width:100%;
-    height:32px;
-    margin-top:8px;
-    background:var(--roxo);
-    border:none;
-    border-radius:6px;
-    color:#fff;
-    font-size:12px;
+    width:100%;height:32px;margin-top:8px;
+    background:var(--roxo);border:none;
+    border-radius:6px;color:#fff;font-size:12px;
 }
 
-/* ================= LOADING ================= */
 #loading{
-    position:absolute;
-    bottom:12px;
-    right:16px;
+    position:absolute;bottom:12px;right:16px;
     background:rgba(0,0,0,.55);
-    border-radius:9px;
-    padding:8px 12px;
-    display:flex;
-    gap:8px;
-    font-size:10px;
-    opacity:0;
-    pointer-events:none;
-    transition:.25s;
-    z-index:10;
+    border-radius:9px;padding:8px 12px;
+    display:flex;gap:8px;font-size:10px;
+    opacity:0;pointer-events:none;
+    transition:.25s;z-index:10;
 }
-
 #loading.show{opacity:1}
 
 .spinner{
-    width:14px;
-    height:14px;
+    width:14px;height:14px;
     border:2px solid rgba(255,255,255,.3);
     border-top:2px solid #fff;
     border-radius:50%;
     animation:spin 1s linear infinite;
 }
+@keyframes spin{to{transform:rotate(360deg)}}
 
-@keyframes spin{
-    to{transform:rotate(360deg)}
-}
-
-/* ================= ERRO ================= */
 #errorBox{
-    position:absolute;
-    left:50%;
-    bottom:52px;
+    position:absolute;left:50%;bottom:52px;
     transform:translateX(-50%) translateY(10px);
     background:rgba(255,0,0,.18);
     border:1px solid rgba(255,0,0,.6);
-    color:#ff6b6b;
-    font-size:11px;
-    padding:6px 12px;
-    border-radius:6px;
-    opacity:0;
-    transition:.25s ease;
-    z-index:11;
-    pointer-events:none;
+    color:#ff6b6b;font-size:11px;
+    padding:6px 12px;border-radius:6px;
+    opacity:0;transition:.25s ease;
+    z-index:11;pointer-events:none;
 }
-
 #errorBox.show{
     opacity:1;
     transform:translateX(-50%) translateY(0);
@@ -178,7 +106,7 @@ button{
 
     <div class="login">
         <h2 id="titulo">Insira suas credenciais</h2>
-        <p id="descricao">Insira seu nome de usuário e senha</p>
+        <p>Insira seu nome de usuário e senha</p>
 
         <div class="field">
             <img class="icon" src="assets/usuario.png">
@@ -206,115 +134,85 @@ button{
     <span>Carregando dados</span>
 </div>
 
-<div id="errorBox">
-    <span id="errorText"></span>
-</div>
+<div id="errorBox"><span id="errorText"></span></div>
 
 <script>
-/* =====================================================
-   BLOQUEIO TOTAL DE POPUPS (OBRIGATÓRIO NO CEF MOBILE)
-===================================================== */
-window.alert   = function(){};
-window.confirm = function(){ return false; };
-window.prompt  = function(){ return null; };
+/* 🔒 BLOQUEIO TOTAL DE POPUPS */
+window.alert=function(){};
+window.confirm=function(){return false};
+window.prompt=function(){return null};
 
-/* ================= VARIÁVEIS ================= */
-let modo = "login";
-let bloqueado = false;
-
-const usuario = document.getElementById("usuario");
-const email   = document.getElementById("email");
-const senha   = document.getElementById("senha");
-const loading = document.getElementById("loading");
-
-const errorBox  = document.getElementById("errorBox");
-const errorText = document.getElementById("errorText");
-
-const btnPrincipal = document.getElementById("btnPrincipal");
-const btnAlternar  = document.getElementById("btnAlternar");
-
-const emailField = document.getElementById("emailField");
-const titulo     = document.getElementById("titulo");
-const tituloTopo = document.getElementById("tituloTopo");
-const toggleSenha= document.getElementById("toggleSenha");
-
-/* ================= ERRO VISUAL ================= */
-function showError(msg){
-    errorText.innerText = "* " + msg;
-
-    loading.classList.remove("show");
-    bloqueado = false;
-
-    errorBox.classList.add("show");
-    errorBox.offsetHeight; // força repaint no mobile
-
-    setTimeout(()=>{
-        errorBox.classList.remove("show");
-    },3000);
+/* 🔒 STUB CEF (EVITA ERRO NO MOBILE) */
+if(typeof window.Cef==="undefined"){
+    window.Cef={
+        sendEvent:function(){},
+        registerEventCallback:function(){}
+    };
 }
 
-/* ================= TOGGLE SENHA ================= */
-toggleSenha.onclick = ()=>{
-    senha.type = senha.type === "password" ? "text" : "password";
+/* ================= JS ================= */
+let modo="login",bloqueado=false;
+
+const usuario=document.getElementById("usuario");
+const email=document.getElementById("email");
+const senha=document.getElementById("senha");
+const loading=document.getElementById("loading");
+const errorBox=document.getElementById("errorBox");
+const errorText=document.getElementById("errorText");
+
+const btnPrincipal=document.getElementById("btnPrincipal");
+const btnAlternar=document.getElementById("btnAlternar");
+const emailField=document.getElementById("emailField");
+const tituloTopo=document.getElementById("tituloTopo");
+const toggleSenha=document.getElementById("toggleSenha");
+
+function showError(msg){
+    errorText.innerText="* "+msg;
+    loading.classList.remove("show");
+    bloqueado=false;
+    errorBox.classList.add("show");
+    errorBox.offsetHeight;
+    setTimeout(()=>errorBox.classList.remove("show"),3000);
+}
+
+toggleSenha.onclick=()=>{
+    senha.type=senha.type==="password"?"text":"password";
 };
 
-/* ================= CEF CALLBACKS ================= */
-Cef.registerEventCallback("setNick", nick=>{
-    if(nick) usuario.value = nick;
+Cef.registerEventCallback("setNick",nick=>{
+    if(nick) usuario.value=nick;
 });
+Cef.registerEventCallback("loginError",showError);
+Cef.registerEventCallback("registerError",showError);
 
-Cef.registerEventCallback("loginError", msg=>{
-    showError(msg);
-});
-
-Cef.registerEventCallback("registerError", msg=>{
-    showError(msg);
-});
-
-Cef.registerEventCallback("loginSuccess", ()=>{
-    loading.classList.remove("show");
-});
-
-Cef.registerEventCallback("registerSuccess", ()=>{
-    loading.classList.remove("show");
-});
-
-/* ================= BOTÃO PRINCIPAL ================= */
-btnPrincipal.onclick = ()=>{
+btnPrincipal.onclick=()=>{
     if(bloqueado) return;
+    if(!senha.value) return showError("Preencha sua senha.");
+    if(modo==="register"&&!email.value) return showError("Preencha seu e-mail.");
 
-    if(!senha.value)
-        return showError("Preencha sua senha.");
-
-    if(modo==="register" && !email.value)
-        return showError("Preencha seu e-mail.");
-
-    bloqueado = true;
+    bloqueado=true;
     loading.classList.add("show");
 
     setTimeout(()=>{
         if(modo==="register")
-            Cef.sendEvent("register", senha.value + "|" + email.value);
+            Cef.sendEvent("register",senha.value+"|"+email.value);
         else
-            Cef.sendEvent("login", senha.value);
+            Cef.sendEvent("login",senha.value);
     },4000);
 };
 
-/* ================= TROCAR LOGIN / REGISTRO ================= */
-btnAlternar.onclick = ()=>{
+btnAlternar.onclick=()=>{
     if(modo==="login"){
         modo="register";
         emailField.style.display="block";
         btnPrincipal.innerText="Criar Conta";
         btnAlternar.innerText="Conectar-se";
-        titulo.innerText="Crie sua conta";
         tituloTopo.innerText="Criar Conta";
     }else{
         modo="login";
         emailField.style.display="none";
         btnPrincipal.innerText="Conectar-se";
         btnAlternar.innerText="Criar Conta";
-        titulo.innerText="Insira suas credenciais";
         tituloTopo.innerText="Realizar Login";
     }
 };
