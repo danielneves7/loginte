@@ -80,9 +80,7 @@ body::before{
     font-size:11px;
 }
 
-.field input[disabled]{
-    opacity:.9;
-}
+.field input[disabled]{opacity:.9}
 
 .field img.icon{
     position:absolute;
@@ -129,9 +127,7 @@ button{
     z-index:10;
 }
 
-#loading.show{
-    opacity:1;
-}
+#loading.show{opacity:1}
 
 .spinner{
     width:14px;
@@ -146,7 +142,7 @@ button{
     to{transform:rotate(360deg)}
 }
 
-/* ================= ERRO (TEXTO) ================= */
+/* ================= ERRO ================= */
 #errorBox{
     position:absolute;
     left:50%;
@@ -191,7 +187,7 @@ button{
 
         <div class="field" id="emailField" style="display:none">
             <img class="icon" src="assets/email.png">
-            <input type="email" id="email" placeholder="Digite seu email">
+            <input type="email" id="email" placeholder="Digite seu e-mail">
         </div>
 
         <div class="field">
@@ -215,6 +211,13 @@ button{
 </div>
 
 <script>
+/* =====================================================
+   BLOQUEIO TOTAL DE POPUPS (OBRIGATÓRIO NO CEF MOBILE)
+===================================================== */
+window.alert   = function(){};
+window.confirm = function(){ return false; };
+window.prompt  = function(){ return null; };
+
 /* ================= VARIÁVEIS ================= */
 let modo = "login";
 let bloqueado = false;
@@ -235,7 +238,7 @@ const titulo     = document.getElementById("titulo");
 const tituloTopo = document.getElementById("tituloTopo");
 const toggleSenha= document.getElementById("toggleSenha");
 
-/* ================= FUNÇÃO DE ERRO (SEM ALERT) ================= */
+/* ================= ERRO VISUAL ================= */
 function showError(msg){
     errorText.innerText = "* " + msg;
 
