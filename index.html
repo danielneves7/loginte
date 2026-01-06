@@ -8,92 +8,173 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-:root { --roxo:#7c3aed; }
+:root {
+    --roxo:#7c3aed;
+    --erro:#ff4d4d;
+}
 
-*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}
+* {
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Inter,sans-serif;
+}
 
-body{
-    width:100vw;height:100vh;
+body {
+    width:100vw;
+    height:100vh;
     background:url("assets/background.png") center/cover no-repeat;
-    overflow:hidden;color:#fff;position:relative;
+    overflow:hidden;
+    color:#fff;
 }
 
-body::before{
-    content:"";position:absolute;inset:0;
-    background:rgba(0,0,0,.25);z-index:0;
+body::before {
+    content:"";
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.25);
+    z-index:0;
 }
 
-.container{position:relative;z-index:1;padding:24px 40px}
+/* ================= CONTAINER ================= */
+.container {
+    position:relative;
+    z-index:1;
+    padding:24px 40px;
+}
 
-.header{display:flex;align-items:center;gap:10px}
-.header img{height:36px}
-.header span{font-size:15px;opacity:.5}
-.header h1{font-size:15px}
+/* ================= HEADER ================= */
+.header {
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
 
-.login{margin-top:40px;max-width:260px}
-.login h2{font-size:18px}
-.login p{font-size:11px;opacity:.7;margin:6px 0 16px}
+.header img { height:36px; }
+.header span { opacity:.5; }
+.header h1 { font-size:15px; }
 
-.field{position:relative;margin-bottom:10px}
-.field input{
-    width:100%;height:32px;
+/* ================= LOGIN ================= */
+.login {
+    margin-top:40px;
+    max-width:260px;
+}
+
+.login h2 { font-size:18px; }
+.login p {
+    font-size:11px;
+    opacity:.7;
+    margin:6px 0 16px;
+}
+
+/* ================= INPUTS ================= */
+.field {
+    position:relative;
+    margin-bottom:10px;
+}
+
+.field input {
+    width:100%;
+    height:32px;
     background:rgba(255,255,255,.1);
     border:1px solid rgba(255,255,255,.2);
     border-radius:6px;
     padding:0 34px;
-    color:#fff;font-size:11px;
-}
-.field input[disabled]{opacity:.9}
-
-.field img.icon{
-    position:absolute;left:10px;top:50%;
-    transform:translateY(-50%);width:14px;
-}
-.field img.toggle{
-    position:absolute;right:10px;top:50%;
-    transform:translateY(-50%);width:16px;
+    color:#fff;
+    font-size:11px;
 }
 
-button{
-    width:100%;height:32px;margin-top:8px;
-    background:var(--roxo);border:none;
-    border-radius:6px;color:#fff;font-size:12px;
+.field input[disabled] {
+    opacity:.9;
+    color:#fff;
 }
 
-/* LOADING */
-#loading{
-    position:absolute;bottom:12px;right:16px;
+.field img.icon {
+    position:absolute;
+    left:10px;
+    top:50%;
+    transform:translateY(-50%);
+    width:14px;
+}
+
+.field img.toggle {
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%);
+    width:16px;
+    cursor:pointer;
+}
+
+/* ================= BOTÕES ================= */
+button {
+    width:100%;
+    height:32px;
+    margin-top:8px;
+    background:var(--roxo);
+    border:none;
+    border-radius:6px;
+    color:#fff;
+    font-size:12px;
+    cursor:pointer;
+}
+
+/* ================= LOADING (CENTRO REAL) ================= */
+#loading {
+    position:fixed;
+    left:50%;
+    bottom:16px;
+    transform:translateX(-50%);
     background:rgba(0,0,0,.55);
-    border-radius:9px;padding:8px 12px;
-    display:flex;gap:8px;font-size:10px;
-    opacity:0;pointer-events:none;
-    transition:.25s;z-index:10;
+    border-radius:9px;
+    padding:8px 14px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:10px;
+    opacity:0;
+    pointer-events:none;
+    transition:.3s;
+    z-index:9999;
 }
-#loading.show{opacity:1}
 
-.spinner{
-    width:14px;height:14px;
+#loading.show {
+    opacity:1;
+}
+
+/* Spinner */
+.spinner {
+    width:14px;
+    height:14px;
     border:2px solid rgba(255,255,255,.3);
     border-top:2px solid #fff;
     border-radius:50%;
     animation:spin 1s linear infinite;
 }
-@keyframes spin{to{transform:rotate(360deg)}}
 
-/* ERRO */
-#errorBox{
-    position:absolute;left:50%;bottom:52px;
-    transform:translateX(-50%) translateY(10px);
-    background:rgba(255,0,0,.18);
-    border:1px solid rgba(255,0,0,.6);
-    color:#ff6b6b;font-size:11px;
-    padding:6px 12px;border-radius:6px;
-    opacity:0;transition:.25s;
-    z-index:11;pointer-events:none;
+@keyframes spin {
+    to { transform:rotate(360deg); }
 }
-#errorBox.show{
+
+/* ================= ERRO ANIMADO ================= */
+#errorBox {
+    position:fixed;
+    left:50%;
+    bottom:48px;
+    transform:translate(-50%,20px);
+    background:rgba(0,0,0,.65);
+    border-radius:8px;
+    padding:6px 12px;
+    font-size:11px;
+    color:var(--erro);
+    opacity:0;
+    transition:.3s;
+    z-index:9999;
+}
+
+#errorBox.show {
     opacity:1;
-    transform:translateX(-50%) translateY(0);
+    transform:translate(-50%,0);
 }
 </style>
 </head>
@@ -109,7 +190,7 @@ button{
 
     <div class="login">
         <h2 id="titulo">Insira suas credenciais</h2>
-        <p>Insira seu nome de usuário e senha</p>
+        <p id="descricao">Insira seu nome de usuário e senha</p>
 
         <div class="field">
             <img class="icon" src="assets/usuario.png">
@@ -132,79 +213,82 @@ button{
     </div>
 </div>
 
+<!-- LOADING CENTRAL -->
 <div id="loading">
     <div class="spinner"></div>
-    <span>Carregando dados</span>
+    <span>Carregando os dados</span>
 </div>
 
-<div id="errorBox"><span id="errorText"></span></div>
+<!-- ERRO -->
+<div id="errorBox"></div>
 
 <script>
-/* BLOQUEIO POPUPS */
-window.alert=()=>{};
-window.confirm=()=>false;
-window.prompt=()=>null;
-
-/* STUB CEF */
-if(!window.Cef){
-    window.Cef={
-        sendEvent:()=>{},
-        registerEventCallback:()=>{}
+/* Fallback navegador */
+if (typeof Cef === "undefined") {
+    window.Cef = {
+        sendEvent:(n,d)=>console.log(n,d),
+        registerEventCallback:(n,cb)=>{
+            if(n==="setNick") setTimeout(()=>cb("Teste_Nick"),500);
+        }
     };
 }
 
-/* VARS */
-let modo="login",bloqueado=false;
+/* ================= VARIÁVEIS ================= */
+let modo="login", bloqueado=false;
 
 const usuario=document.getElementById("usuario");
 const email=document.getElementById("email");
 const senha=document.getElementById("senha");
 const loading=document.getElementById("loading");
 const errorBox=document.getElementById("errorBox");
-const errorText=document.getElementById("errorText");
 
 const btnPrincipal=document.getElementById("btnPrincipal");
 const btnAlternar=document.getElementById("btnAlternar");
 const emailField=document.getElementById("emailField");
+const titulo=document.getElementById("titulo");
 const tituloTopo=document.getElementById("tituloTopo");
 const toggleSenha=document.getElementById("toggleSenha");
 
-function showError(msg){
-    errorText.innerText="* "+msg;
+/* Toggle senha */
+toggleSenha.onclick=()=>{
+    senha.type = senha.type==="password" ? "text" : "password";
+    toggleSenha.src = senha.type==="password"
+        ? "assets/ocultar.png"
+        : "assets/mostrar.png";
+};
+
+/* Mostrar erro */
+function mostrarErro(msg){
     loading.classList.remove("show");
-    bloqueado=false;
+    errorBox.innerText="* "+msg;
     errorBox.classList.add("show");
-    errorBox.offsetHeight;
+    bloqueado=false;
     setTimeout(()=>errorBox.classList.remove("show"),3000);
 }
 
-/* TOGGLE */
-toggleSenha.onclick=()=>{
-    senha.type=senha.type==="password"?"text":"password";
-};
-
-/* CEF */
+/* Nick */
 Cef.registerEventCallback("setNick",nick=>{
-    if(nick) usuario.value=nick;
+    usuario.value = nick;
 });
-Cef.registerEventCallback("loginError",showError);
-Cef.registerEventCallback("registerError",showError);
 
-/* BOTÃO */
+/* Eventos */
+Cef.registerEventCallback("loginError",mostrarErro);
+Cef.registerEventCallback("registerError",mostrarErro);
+Cef.registerEventCallback("loginSuccess",()=>loading.classList.remove("show"));
+Cef.registerEventCallback("registerSuccess",()=>loading.classList.remove("show"));
+
+/* Botão principal */
 btnPrincipal.onclick=()=>{
     if(bloqueado) return;
 
-    const s = senha.value.trim();
-    const e = email.value.trim();
-
-    if(!s) return showError("Preencha sua senha.");
-    if(s.length < 6 || s.length > 12)
-        return showError("Use uma senha de 6 a 12 caracteres.");
+    if(!senha.value) return mostrarErro("Preencha com sua senha");
 
     if(modo==="register"){
-        if(!e) return showError("Preencha seu e-mail.");
-        if(!e.endsWith("@gmail.com") && !e.endsWith("@hotmail.com"))
-            return showError("E-mail inválido. Ex: silvio@gmail.com");
+        if(!email.value) return mostrarErro("Preencha com seu e-mail");
+        if(senha.value.length<6||senha.value.length>12)
+            return mostrarErro("Use uma senha de 6 a 12 caracteres");
+        if(!email.value.endsWith("@gmail.com") && !email.value.endsWith("@hotmail.com"))
+            return mostrarErro("E-mail inválido. Ex: silvio@gmail.com");
     }
 
     bloqueado=true;
@@ -212,29 +296,20 @@ btnPrincipal.onclick=()=>{
 
     setTimeout(()=>{
         if(modo==="register")
-            Cef.sendEvent("register",s+"|"+e);
+            Cef.sendEvent("register", senha.value+"|"+email.value);
         else
-            Cef.sendEvent("login",s);
+            Cef.sendEvent("login", senha.value);
     },4000);
 };
 
-/* TROCA */
+/* Alternar */
 btnAlternar.onclick=()=>{
-    if(bloqueado) return;
-
-    if(modo==="login"){
-        modo="register";
-        emailField.style.display="block";
-        btnPrincipal.innerText="Criar Conta";
-        btnAlternar.innerText="Conectar-se";
-        tituloTopo.innerText="Criar Conta";
-    }else{
-        modo="login";
-        emailField.style.display="none";
-        btnPrincipal.innerText="Conectar-se";
-        btnAlternar.innerText="Criar Conta";
-        tituloTopo.innerText="Realizar Login";
-    }
+    modo = modo==="login" ? "register" : "login";
+    emailField.style.display = modo==="register" ? "block" : "none";
+    btnPrincipal.innerText = modo==="register" ? "Criar Conta" : "Conectar-se";
+    btnAlternar.innerText = modo==="register" ? "Conectar-se" : "Criar Conta";
+    titulo.innerText = modo==="register" ? "Crie sua conta" : "Insira suas credenciais";
+    tituloTopo.innerText = modo==="register" ? "Criar Conta" : "Realizar Login";
 };
 </script>
 
