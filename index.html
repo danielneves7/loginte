@@ -99,10 +99,17 @@ body::before {
     font-size: 11px;
 }
 
-/* IMPORTANTE: readonly (nick visível no mobile) */
-.field input[readonly] {
-    opacity: 0.85;
+/* INPUT USUÁRIO — BLOQUEADO VIA CSS (CEF MOBILE SAFE) */
+#usuario {
+    pointer-events: none;
+    caret-color: transparent;
     color: #ffffff;
+}
+
+/* Placeholder visível */
+#usuario::placeholder {
+    color: #ffffff;
+    opacity: 0.9;
 }
 
 .field img.icon {
@@ -187,10 +194,10 @@ button {
             Sintonia Roleplay.
         </p>
 
-        <!-- USUÁRIO (NICK DO PLAYER) -->
+        <!-- USUÁRIO (NICK VIA PLACEHOLDER) -->
         <div class="field">
             <img class="icon" src="assets/usuario.png">
-            <input type="text" id="usuario" readonly>
+            <input type="text" id="usuario" placeholder="Carregando..." autocomplete="off">
         </div>
 
         <!-- EMAIL -->
@@ -242,9 +249,10 @@ toggle.onclick = () => {
         : "assets/mostrar.png";
 };
 
-/* Recebe nick do Pawn */
+/* RECEBE NICK DO PAWN — PLACEHOLDER (CEF MOBILE FIX) */
 Cef.registerEventCallback("setNick", data => {
-    usuario.value = data.nick;
+    usuario.placeholder = data.nick;
+    usuario.value = "";
 });
 
 /* Erros */
@@ -276,7 +284,7 @@ btnPrincipal.onclick = () => {
         } else {
             Cef.sendEvent("login", senha.value);
         }
-    }, 4000); // ⬅ 4 segundos
+    }, 4000);
 };
 
 /* Alternar Login / Criar Conta */
