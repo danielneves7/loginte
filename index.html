@@ -44,6 +44,7 @@ body::before{
     color:#fff;font-size:11px;
 }
 .field input[disabled]{opacity:.9}
+
 .field img.icon{
     position:absolute;left:10px;top:50%;
     transform:translateY(-50%);width:14px;
@@ -59,6 +60,7 @@ button{
     border-radius:6px;color:#fff;font-size:12px;
 }
 
+/* LOADING */
 #loading{
     position:absolute;bottom:12px;right:16px;
     background:rgba(0,0,0,.55);
@@ -78,6 +80,7 @@ button{
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* ERRO */
 #errorBox{
     position:absolute;left:50%;bottom:52px;
     transform:translateX(-50%) translateY(10px);
@@ -85,7 +88,7 @@ button{
     border:1px solid rgba(255,0,0,.6);
     color:#ff6b6b;font-size:11px;
     padding:6px 12px;border-radius:6px;
-    opacity:0;transition:.25s ease;
+    opacity:0;transition:.25s;
     z-index:11;pointer-events:none;
 }
 #errorBox.show{
@@ -137,20 +140,20 @@ button{
 <div id="errorBox"><span id="errorText"></span></div>
 
 <script>
-/* 🔒 BLOQUEIO TOTAL DE POPUPS */
-window.alert=function(){};
-window.confirm=function(){return false};
-window.prompt=function(){return null};
+/* BLOQUEIO POPUPS */
+window.alert=()=>{};
+window.confirm=()=>false;
+window.prompt=()=>null;
 
-/* 🔒 STUB CEF (EVITA ERRO NO MOBILE) */
-if(typeof window.Cef==="undefined"){
+/* STUB CEF */
+if(!window.Cef){
     window.Cef={
-        sendEvent:function(){},
-        registerEventCallback:function(){}
+        sendEvent:()=>{},
+        registerEventCallback:()=>{}
     };
 }
 
-/* ================= JS ================= */
+/* VARS */
 let modo="login",bloqueado=false;
 
 const usuario=document.getElementById("usuario");
@@ -175,33 +178,50 @@ function showError(msg){
     setTimeout(()=>errorBox.classList.remove("show"),3000);
 }
 
+/* TOGGLE */
 toggleSenha.onclick=()=>{
     senha.type=senha.type==="password"?"text":"password";
 };
 
+/* CEF */
 Cef.registerEventCallback("setNick",nick=>{
     if(nick) usuario.value=nick;
 });
 Cef.registerEventCallback("loginError",showError);
 Cef.registerEventCallback("registerError",showError);
 
+/* BOTÃO */
 btnPrincipal.onclick=()=>{
     if(bloqueado) return;
-    if(!senha.value) return showError("Preencha sua senha.");
-    if(modo==="register"&&!email.value) return showError("Preencha seu e-mail.");
+
+    const s = senha.value.trim();
+    const e = email.value.trim();
+
+    if(!s) return showError("Preencha sua senha.");
+    if(s.length < 6 || s.length > 12)
+        return showError("Use uma senha de 6 a 12 caracteres.");
+
+    if(modo==="register"){
+        if(!e) return showError("Preencha seu e-mail.");
+        if(!e.endsWith("@gmail.com") && !e.endsWith("@hotmail.com"))
+            return showError("E-mail inválido. Ex: silvio@gmail.com");
+    }
 
     bloqueado=true;
     loading.classList.add("show");
 
     setTimeout(()=>{
         if(modo==="register")
-            Cef.sendEvent("register",senha.value+"|"+email.value);
+            Cef.sendEvent("register",s+"|"+e);
         else
-            Cef.sendEvent("login",senha.value);
+            Cef.sendEvent("login",s);
     },4000);
 };
 
+/* TROCA */
 btnAlternar.onclick=()=>{
+    if(bloqueado) return;
+
     if(modo==="login"){
         modo="register";
         emailField.style.display="block";
